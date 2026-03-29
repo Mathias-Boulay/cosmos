@@ -14,7 +14,6 @@ CORE_IMAGE_EXTRA_INSTALL += "\
     libgpiod \
     libgpiod-tools \
     kernel-modules \
-    rtw88 \
     wpa-supplicant \
     iw \
     kalico \
@@ -40,6 +39,10 @@ CORE_IMAGE_EXTRA_INSTALL += "\
     update-scripts \
     camera-led-bridge \
     logrotate \
+"
+
+CORE_IMAGE_EXTRA_INSTALL:append:elegoo-centauri-carbon1 = " \
+    rtw88 \
 "
 
 INITRAMFS_IMAGE = "core-image-tiny-initramfs"
