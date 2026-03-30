@@ -39,6 +39,7 @@ CORE_IMAGE_EXTRA_INSTALL += "\
     update-scripts \
     camera-led-bridge \
     logrotate \
+    fbdoom \
 "
 
 CORE_IMAGE_EXTRA_INSTALL:append:elegoo-centauri-carbon1 = " \

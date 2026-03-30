@@ -1,0 +1,40 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          doom
+# Required-Start:    $local_fs $remote_fs $network doom-firmware-dsp doom-firmware-toolhead doom-firmware-bed
+# Required-Stop:     $local_fs $remote_fs $network
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Doom 3D Printer Firmware
+### END INIT INFO
+
+case "$1" in
+    start)
+        echo "Starting doom..."
+        cat /dev/zero > /dev/fb0
+        openvt -s -w -- fbdoom -iwad /usr/share/doom/doom1.wad
+        ;;
+    stop)
+        echo "Stopping doom..."
+        kill $(pidof fbdoom)
+        ;;
+    restart|force-reload)
+        $0 stop
+        sleep 1
+        $0 start
+        ;;
+    status)
+        if kill -0 $(pidof fbdoom) 2>/dev/null; then
+            echo "doom is running (PID $(pidof fbdoom))"
+        else
+            echo "doom is not running"
+            exit 1
+        fi
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|restart|status}"
+        exit 1
+        ;;
+esac
+
+exit 0
