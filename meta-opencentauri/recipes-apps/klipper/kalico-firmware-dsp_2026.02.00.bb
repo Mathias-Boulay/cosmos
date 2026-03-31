@@ -15,7 +15,7 @@ RPROVIDES:${PN} += "klipper-firmware-dsp"
 EXTRA_OEMAKE += " KCONFIG_CONFIG=../config.mainboard"
 
 INITSCRIPT_NAME = "klipper-firmware-dsp"
-INITSCRIPT_PARAMS = "defaults 94 4"
+INITSCRIPT_PARAMS = "defaults 93 4"
 
 INHIBIT_PACKAGE_STRIP = "1"
 INHIBIT_PACKAGE_DEBUG_SPLIT = "1"

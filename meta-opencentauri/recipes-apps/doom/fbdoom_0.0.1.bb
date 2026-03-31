@@ -20,7 +20,7 @@ S = "${WORKDIR}/git"
 inherit update-rc.d
 
 INITSCRIPT_NAME = "doom"
-INITSCRIPT_PARAMS = "defaults 93 4"
+INITSCRIPT_PARAMS = "defaults 94 4"
 
 EXTRA_OEMAKE = " \
     'CC=${CC}' \
