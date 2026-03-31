@@ -11,6 +11,7 @@ SRC_URI = " \
     https://www.jbserver.com/downloads/games/doom/misc/shareware/doom1.wad.zip \
     file://doom.init \
     file://withmainmenu.diff \
+    file://0001-touchscreen-support-ig.patch \
 "
 SRC_URI[sha256sum] = "c1d1f430e623b5b02693a2ab42988f951fb66ae3bd3add06e557bdf36af0e24f"
 SRCREV = "6c599f50e9e8e9436a5c064f42836eb48ff6bde0"
