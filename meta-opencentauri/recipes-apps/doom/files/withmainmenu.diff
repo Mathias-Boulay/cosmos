@@ -1,0 +1,43 @@
+diff --git a/fbdoom/g_game.c b/fbdoom/g_game.c
+index 9954d78..86fbce0 100644
+--- a/fbdoom/g_game.c
++++ b/fbdoom/g_game.c
+@@ -1354,7 +1354,11 @@ void G_DoCompleted (void)
+ 	    G_PlayerFinishLevel (i);        // take away cards and stuff 
+ 	 
+     if (automapactive) 
+-	AM_Stop (); 
++	AM_Stop ();
++
++    // Quit after finishing level 1
++    if (gamemap == 1)
++	I_Quit(); 
+ 	
+     if (gamemode != commercial)
+     {
+diff --git a/fbdoom/i_system.c b/fbdoom/i_system.c
+index 5d00091..64b30ae 100644
+--- a/fbdoom/i_system.c
++++ b/fbdoom/i_system.c
+@@ -257,6 +257,8 @@ void I_Quit (void)
+         entry = entry->next;
+     }
+ 
++    exit(0);
++
+ #if ORIGCODE
+     SDL_Quit();
+ 
+diff --git a/fbdoom/m_menu.c b/fbdoom/m_menu.c
+index 5347522..dc59d89 100644
+--- a/fbdoom/m_menu.c
++++ b/fbdoom/m_menu.c
+@@ -247,7 +247,7 @@ menuitem_t MainMenu[]=
+     {1,"M_SAVEG",M_SaveGame,'s'},
+     // Another hickup with Special edition.
+     {1,"M_RDTHIS",M_ReadThis,'r'},
+-    {1,"M_QUITG",M_QuitDOOM,'q'}
++    {-1,"M_QUITG",M_QuitDOOM,0}
+ };
+ 
+ menu_t  MainDef =
