@@ -10,6 +10,8 @@ inherit systemd
 
 PV = "6.7"
 
+S = "${WORKDIR}/git"
+
 SRC_URI = " \
 	git://github.com/pikvm/ustreamer.git;protocol=https;branch=master \
 "
