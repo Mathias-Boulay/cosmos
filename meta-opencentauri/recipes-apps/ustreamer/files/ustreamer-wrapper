@@ -1,3 +1,8 @@
 #!/bin/sh
 
-exec /usr/bin/ustreamer "$@" >> /tmp/ustreamer.log 2>&1
+echo 1000 > "/proc/self/oom_score_adj"
+
+while true; do
+    ustreamer "$@"
+    sleep 5
+done
