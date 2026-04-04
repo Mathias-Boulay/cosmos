@@ -10,13 +10,13 @@ SRC_URI = "git://github.com/pikvm/ustreamer.git;protocol=https;branch=master"
 
 S = "${WORKDIR}/git"
 
-DEPENDS = "libevent libjpeg-turbo libbsd"
+DEPENDS = "libevent libjpeg-turbo libbsd pkgconfig-native"
 
 EXTRA_OEMAKE = " \
     PREFIX=${prefix} \
     DESTDIR=${D} \
     CC='${CC}' \
-    PKG_CONFIG='pkg-config' \
+    PKG_CONFIG='${PKG_CONFIG}' \
     CFLAGS='${CFLAGS}' \
     LDFLAGS='${LDFLAGS}' \
     WITH_PYTHON=0 \
