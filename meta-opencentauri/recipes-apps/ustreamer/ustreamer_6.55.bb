@@ -6,14 +6,18 @@ LIC_FILES_CHKSUM = " \
 	file://LICENSE;md5=d32239bcb673463ab874e80d47fae504 \
 "
 
-inherit pkgconfig
+inherit pkgconfig update-rc.d
 
 PV = "6.55"
 
 S = "${WORKDIR}/git"
 
+INITSCRIPT_NAME = "ustreamer"
+INITSCRIPT_PARAMS = "defaults 97 5"
+
 SRC_URI = " \
 	git://github.com/pikvm/ustreamer.git;protocol=https;branch=master \
+	file://ustreamer-init-d \
 "
 SRCREV = "88460b72e191035d04355e25106af817cbfe069e"
 
@@ -24,8 +28,12 @@ DEPENDS += " libbsd libevent libjpeg-turbo "
 do_install() {
 	install -m 0755 -d ${D}${bindir}
 	install -m 0755 ${S}/src/ustreamer.bin ${D}${bindir}/ustreamer
+
+	install -d ${D}${sysconfdir}/init.d
+	install -m 0755 ${WORKDIR}/ustreamer-init-d ${D}${sysconfdir}/init.d/ustreamer
 }
 
 FILES:${PN} = " \
 	${bindir}/ustreamer \
+	${sysconfdir}/init.d/ustreamer \
 "
