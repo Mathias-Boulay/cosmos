@@ -41,6 +41,7 @@ CORE_IMAGE_EXTRA_INSTALL += "\
     logrotate \
     fbdoom \
     v4l-utils \
+    ustreamer \
 "
 
 INITRAMFS_IMAGE = "core-image-tiny-initramfs"
