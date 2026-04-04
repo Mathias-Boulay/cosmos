@@ -1,0 +1,2 @@
+#!/bin/bash
+exec /usr/bin/ustreamer "$@" >> /tmp/ustreamer.log 2>&1

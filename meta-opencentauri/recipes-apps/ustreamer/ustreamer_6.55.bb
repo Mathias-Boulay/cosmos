@@ -18,6 +18,7 @@ INITSCRIPT_PARAMS = "defaults 97 5"
 SRC_URI = " \
 	git://github.com/pikvm/ustreamer.git;protocol=https;branch=master \
 	file://ustreamer-init-d \
+	file://ustreamer-wrapper \
 "
 SRCREV = "88460b72e191035d04355e25106af817cbfe069e"
 
@@ -31,9 +32,12 @@ do_install() {
 
 	install -d ${D}${sysconfdir}/init.d
 	install -m 0755 ${WORKDIR}/ustreamer-init-d ${D}${sysconfdir}/init.d/ustreamer
+
+	install -m 0755 ${WORKDIR}/ustreamer-wrapper ${D}${bindir}/ustreamer-wrapper
 }
 
 FILES:${PN} = " \
 	${bindir}/ustreamer \
+	${bindir}/ustreamer-wrapper \
 	${sysconfdir}/init.d/ustreamer \
 "
