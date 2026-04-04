@@ -6,16 +6,16 @@ LIC_FILES_CHKSUM = " \
 	file://LICENSE;md5=d32239bcb673463ab874e80d47fae504 \
 "
 
-inherit systemd
+inherit pkgconfig
 
-PV = "6.7"
+PV = "6.55"
 
 S = "${WORKDIR}/git"
 
 SRC_URI = " \
 	git://github.com/pikvm/ustreamer.git;protocol=https;branch=master \
 "
-SRCREV = "52a2326426f108319f8e189def00dd82f68562bf"
+SRCREV = "88460b72e191035d04355e25106af817cbfe069e"
 
 SRC_URI[sha256sum] = "51a8a974d55d5139a86c055df63b99e90e31e9d6af62f69b2decccdb02a29092"
 
