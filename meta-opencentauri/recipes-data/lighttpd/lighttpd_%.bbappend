@@ -1,0 +1,1 @@
+RDEPENDS:${PN}:append = " lighttpd-module-proxy"
