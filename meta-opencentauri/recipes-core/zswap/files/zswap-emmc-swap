@@ -52,10 +52,10 @@ configure_zswap() {
     fi
 
     if [ -e /sys/module/zswap/parameters/writeback_enabled ]; then
-        echo N > /sys/module/zswap/parameters/writeback_enabled
+        echo 0 > /sys/module/zswap/parameters/writeback_enabled
     fi
 
-    echo 150 > /proc/sys/vm/swappiness
+    echo 100 > /proc/sys/vm/swappiness
     echo 0   > /proc/sys/vm/watermark_boost_factor
     echo 125 > /proc/sys/vm/watermark_scale_factor
     echo 0   > /proc/sys/vm/page-cluster
@@ -79,7 +79,7 @@ ensure_swapfile() {
         mkswap "$SWAP_FILE" >/dev/null
     fi
 
-    swapon -p 1 "$SWAP_FILE" 2>/dev/null || true
+    swapon -p -2 "$SWAP_FILE" 2>/dev/null || true
 }
 
 case "$1" in
