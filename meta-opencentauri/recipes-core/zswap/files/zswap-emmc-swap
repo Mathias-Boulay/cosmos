@@ -1,0 +1,107 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          zswap-emmc-swap
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Configure zswap with tiny backing swapfile
+### END INIT INFO
+
+set -e
+
+SWAP_FILE="/user-resource/swapfile"
+BACKING_SWAP_MB=32
+POOL_PERCENT=20
+MIN_POOL_PERCENT=5
+MAX_POOL_PERCENT=25
+
+[ -f /etc/default/zswap ] && . /etc/default/zswap || true
+
+clamp_pool_percent() {
+    value="${POOL_PERCENT}"
+    case "$value" in
+        ''|*[!0-9]*) value=20 ;;
+    esac
+    if [ "$value" -lt "$MIN_POOL_PERCENT" ]; then
+        value="$MIN_POOL_PERCENT"
+    fi
+    if [ "$value" -gt "$MAX_POOL_PERCENT" ]; then
+        value="$MAX_POOL_PERCENT"
+    fi
+    echo "$value"
+}
+
+configure_zswap() {
+    pool_percent="$(clamp_pool_percent)"
+
+    if [ -e /sys/module/zswap/parameters/enabled ]; then
+        echo 1 > /sys/module/zswap/parameters/enabled
+    fi
+
+    if [ -e /sys/module/zswap/parameters/compressor ]; then
+        echo lz4 > /sys/module/zswap/parameters/compressor
+    fi
+
+    if [ -e /sys/module/zswap/parameters/max_pool_percent ]; then
+        echo "$pool_percent" > /sys/module/zswap/parameters/max_pool_percent
+    fi
+
+    if [ -e /sys/module/zswap/parameters/accept_threshold_percent ]; then
+        echo "$pool_percent" > /sys/module/zswap/parameters/accept_threshold_percent
+    fi
+
+    if [ -e /sys/module/zswap/parameters/writeback_enabled ]; then
+        echo N > /sys/module/zswap/parameters/writeback_enabled
+    fi
+
+    echo 150 > /proc/sys/vm/swappiness
+    echo 0   > /proc/sys/vm/watermark_boost_factor
+    echo 125 > /proc/sys/vm/watermark_scale_factor
+    echo 0   > /proc/sys/vm/page-cluster
+    echo 500 > /proc/sys/vm/vfs_cache_pressure
+}
+
+ensure_swapfile() {
+    if [ ! -d /user-resource ]; then
+        echo "zswap-emmc-swap: /user-resource not mounted, skipping"
+        return 0
+    fi
+
+    expected_size_bytes=$((BACKING_SWAP_MB * 1024 * 1024))
+    current_size_bytes="$(stat -c%s "$SWAP_FILE" 2>/dev/null || echo 0)"
+
+    if [ "$current_size_bytes" -ne "$expected_size_bytes" ]; then
+        swapoff "$SWAP_FILE" 2>/dev/null || true
+        rm -f "$SWAP_FILE"
+        dd if=/dev/zero of="$SWAP_FILE" bs=1M count="$BACKING_SWAP_MB" 2>/dev/null
+        chmod 0600 "$SWAP_FILE"
+        mkswap "$SWAP_FILE" >/dev/null
+    fi
+
+    swapon -p 1 "$SWAP_FILE" 2>/dev/null || true
+}
+
+case "$1" in
+    start)
+        configure_zswap
+        ensure_swapfile
+        ;;
+    stop)
+        swapoff "$SWAP_FILE" 2>/dev/null || true
+        ;;
+    status)
+        if grep -q "$SWAP_FILE" /proc/swaps 2>/dev/null; then
+            echo "zswap-emmc-swap: active"
+            grep "$SWAP_FILE" /proc/swaps
+        else
+            echo "zswap-emmc-swap: inactive"
+        fi
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status}"
+        exit 1
+        ;;
+esac
+
+exit 0
