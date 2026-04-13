@@ -32,7 +32,7 @@ CORE_IMAGE_EXTRA_INSTALL += "\
     ustreamer \
     swupdate \
     u-boot-fw-utils \
-    zram \
+    zswap-emmc-swap \
     usb-automount \
     dev-by-id \
     psplash \

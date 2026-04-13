@@ -1,0 +1,61 @@
+#!/bin/sh
+### BEGIN INIT INFO
+# Provides:          zswap-emmc-swap
+# Required-Start:    $local_fs
+# Required-Stop:     $local_fs
+# Default-Start:     2 3 4 5
+# Default-Stop:      0 1 6
+# Short-Description: Configure zswap with tiny backing swapfile
+### END INIT INFO
+
+set -e
+
+SWAP_FILE="/user-resource/swapfile"
+
+configure_zswap() {
+    echo 1   > /sys/module/zswap/parameters/enabled
+    echo lz4 > /sys/module/zswap/parameters/compressor
+    echo 20  > /sys/module/zswap/parameters/max_pool_percent
+    echo 20  > /sys/module/zswap/parameters/accept_threshold_percent
+    echo 0   > /sys/module/zswap/parameters/writeback_enabled
+
+    echo 100 > /proc/sys/vm/swappiness
+    echo 0   > /proc/sys/vm/watermark_boost_factor
+    echo 125 > /proc/sys/vm/watermark_scale_factor
+    echo 0   > /proc/sys/vm/page-cluster
+    echo 500 > /proc/sys/vm/vfs_cache_pressure
+}
+
+ensure_swapfile() {
+    if [ ! -f "$SWAP_FILE" ]; then
+        dd if=/dev/zero of="$SWAP_FILE" bs=1M count=32 2>/dev/null
+        chmod 0600 "$SWAP_FILE"
+        mkswap "$SWAP_FILE" >/dev/null
+    fi
+
+    swapon -p -2 "$SWAP_FILE" 2>/dev/null || true
+}
+
+case "$1" in
+    start)
+        configure_zswap
+        ensure_swapfile
+        ;;
+    stop)
+        swapoff "$SWAP_FILE" 2>/dev/null || true
+        ;;
+    status)
+        if grep -q "$SWAP_FILE" /proc/swaps 2>/dev/null; then
+            echo "zswap-emmc-swap: active"
+            grep "$SWAP_FILE" /proc/swaps
+        else
+            echo "zswap-emmc-swap: inactive"
+        fi
+        ;;
+    *)
+        echo "Usage: $0 {start|stop|status}"
+        exit 1
+        ;;
+esac
+
+exit 0
